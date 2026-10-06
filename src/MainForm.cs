@@ -26,7 +26,7 @@ namespace MusicAssistant {
    link.HandleCreated+=(s,e)=>SendMessage(link.Handle,0x1501,new IntPtr(1),"粘贴 QQ / 网易云歌单分享链接");
    historySearch.HandleCreated+=(s,e)=>SendMessage(historySearch.Handle,0x1501,new IntPtr(1),"搜索歌曲、歌手或平台");
    songSearch.HandleCreated+=(s,e)=>SendMessage(songSearch.Handle,0x1501,new IntPtr(1),"搜索歌曲、歌手或平台");
-   Text="音乐助手 0.5 · Walkman Library";Size=new Size(1320,920);MinimumSize=new Size(1060,740);StartPosition=FormStartPosition.CenterScreen;BackColor=background;Font=new Font("Microsoft YaHei UI",9f);ForeColor=ink;
+   Text="音乐助手 0.6 · Walkman Library";Size=new Size(1320,920);MinimumSize=new Size(1060,740);StartPosition=FormStartPosition.CenterScreen;BackColor=background;Font=new Font("Microsoft YaHei UI",9f);ForeColor=ink;
    previewMode=preview;InitializeShell();
    FormClosing+=(s,e)=>{if(busy){cancellation.Cancel();e.Cancel=true;Append("正在停止；完成当前提交后即可关闭。");}else if(!SkipTaskSaveOnClose)SaveTasks();};
    string taskPath=Path.Combine(store.Root,"tasks.json");if(File.Exists(taskPath))playlists.AddRange(Json.Read<List<Playlist>>(File.ReadAllText(taskPath,Encoding.UTF8))??new List<Playlist>());
@@ -40,12 +40,12 @@ namespace MusicAssistant {
   void Safe(Action action){try{action();}catch(Exception ex){MessageBox.Show(this,ex.Message,"音乐助手",MessageBoxButtons.OK,MessageBoxIcon.Information);}}
   FlowLayoutPanel Row(int height){return new FlowLayoutPanel{Dock=DockStyle.Fill,Height=height,WrapContents=false,FlowDirection=FlowDirection.LeftToRight,Padding=new Padding(0,5,0,0)};}
   void RefreshLists(){int selected=listSelector.SelectedIndex;listSelector.Items.Clear();foreach(var p in playlists)listSelector.Items.Add(p.Name);if(playlists.Count>0)listSelector.SelectedIndex=Math.Max(0,Math.Min(selected,playlists.Count-1));else BindGrid();RefreshSidebar();}
-  void SelectionChanged(object s,EventArgs e){if(buildingUi)return;cardSelected=null;BindGrid();RefreshSidebar();}
+  void SelectionChanged(object s,EventArgs e){if(buildingUi)return;ResetAlbumPage();BindGrid();RefreshSidebar();}
   void GridDoubleClick(object s,DataGridViewCellEventArgs e){if(e.RowIndex>=0)BindSource();}
   void GridTooltip(object s,DataGridViewCellToolTipTextNeededEventArgs e){if(e.RowIndex>=0){var t=grid.Rows[e.RowIndex].DataBoundItem as Track;if(t!=null)e.ToolTipText=t.Detail+"\n"+t.SourcePath;}}
   Playlist Current {get{return listSelector.SelectedIndex>=0&&listSelector.SelectedIndex<playlists.Count?playlists[listSelector.SelectedIndex]:null;}}
   Track Selected {get{return showCards?cardSelected:(grid.CurrentRow==null?null:grid.CurrentRow.DataBoundItem as Track);}}
-  void BindGrid(){if(buildingUi)return;var visible=VisibleTracks();grid.DataSource=new BindingList<Track>(visible);BuildAlbumWall(visible);UpdateStats();UpdateStage(visible.Count);}
+  void BindGrid(){if(buildingUi)return;var selected=Selected;var visible=VisibleTracks();grid.DataSource=new BindingList<Track>(visible);if(!showCards&&selected!=null&&visible.Contains(selected))foreach(DataGridViewRow row in grid.Rows)if(row.DataBoundItem==selected){grid.CurrentCell=row.Cells[0];break;}BuildAlbumWall(visible);UpdateStats();UpdateStage(visible.Count);}
   void UpdateStats(){UpdateCounters();}
   void Add(Playlist p){playlists.Add(p);RefreshLists();listSelector.SelectedIndex=playlists.Count-1;SaveTasks();Append("已导入「"+p.Name+"」，"+p.Tracks.Count+" 首。歌曲顺序按原列表保留。");if(!string.IsNullOrEmpty(p.ImportNotice))Append("读取说明："+p.ImportNotice);}
   void ImportFile(){using(var dialog=new OpenFileDialog{Filter="歌单文件|*.csv;*.tsv;*.json;*.m3u;*.m3u8",Multiselect=true})if(dialog.ShowDialog(this)==DialogResult.OK)foreach(string file in dialog.FileNames)Add(Imports.Load(file));}

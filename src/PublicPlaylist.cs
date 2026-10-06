@@ -43,7 +43,7 @@ namespace MusicAssistant {
    return CompleteNetEase(plan);
   }
   static string FetchNetEase(string url,CancellationToken ct) {
-   var request=(HttpWebRequest)WebRequest.Create(url);request.AllowAutoRedirect=false;request.Timeout=20000;request.ReadWriteTimeout=20000;request.UserAgent="MusicAssistant/0.5";request.Referer="https://music.163.com/";request.Accept="application/json";request.AutomaticDecompression=DecompressionMethods.GZip|DecompressionMethods.Deflate;
+   var request=(HttpWebRequest)WebRequest.Create(url);request.AllowAutoRedirect=false;request.Timeout=20000;request.ReadWriteTimeout=20000;request.UserAgent="MusicAssistant/0.6";request.Referer="https://music.163.com/";request.Accept="application/json";request.AutomaticDecompression=DecompressionMethods.GZip|DecompressionMethods.Deflate;
    using(ct.Register(()=>request.Abort()))try{using(var response=(HttpWebResponse)request.GetResponse())using(var reader=new StreamReader(response.GetResponseStream(),Encoding.UTF8)){
     if(response.StatusCode!=HttpStatusCode.OK)throw new InvalidDataException("网易公开歌单服务未返回成功状态");var sb=new StringBuilder();char[] buffer=new char[8192];int n;while((n=reader.Read(buffer,0,buffer.Length))>0){ct.ThrowIfCancellationRequested();sb.Append(buffer,0,n);if(sb.Length>32*1024*1024)throw new InvalidDataException("网易歌单超出读取大小限制");}return sb.ToString();
    }}catch(WebException){ct.ThrowIfCancellationRequested();throw;}
