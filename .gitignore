@@ -1,0 +1,23 @@
+dist/
+.test-output/
+release/
+.playlist-check.html
+.qq-check.html
+.research/
+*.user
+.tools/
+UserData/
+**/UserData/
+*.ekey
+*.ekey.bak
+*.track.json
+.env
+.env.*
+*.log
+*.pfx
+*.pem
+__pycache__/
+*.py[cod]
+# One-off local UI migration helpers; the resulting UI source is in src/.
+/scripts/redesign-ui.py
+/scripts/refine-ui.py
