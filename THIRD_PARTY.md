@@ -14,4 +14,6 @@ QQ 公开歌单读取使用 QQ 官方域名公开元数据服务，不发送账�
 
 FFmpeg 9.0.2 独立进程的 GPLv3 许可证和构建信息随包位于 `tools`。
 
+歌单协议研究参考 [NeteaseCloudMusicApiEnhanced/api-enhanced](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced) 的完整 ID 列表与分批详情流程，以及 [HyPlayer.NeteaseProvider](https://github.com/HyPlayer/HyPlayer.NeteaseProvider) 的 API 契约。本应用的公开元数据适配器为 C# 实现，没有打包其 Node 服务或引用其 NuGet DLL。QQ 进一步可参考 [Rain120/qq-music-api](https://github.com/Rain120/qq-music-api)。这些社区项目的可用性需按具体接口实测，包本身不保证账号权限、曲目可下载性或格式解密。
+
 注意：上游项目的格式支持/实测声明是实现参考，不等于本应用已在用户所有客户端版本上验证。应用自身的自动化测试记录保存在开发目录 `.test-output/latest-test-results.txt`，包含已知解密向量、合成音频容器、音频一致性及真实公开歌单读取。真实 QQ 登录状态没有在开发测试中读取。

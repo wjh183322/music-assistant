@@ -26,7 +26,7 @@ namespace MusicAssistant {
    link.HandleCreated+=(s,e)=>SendMessage(link.Handle,0x1501,new IntPtr(1),"粘贴 QQ / 网易云歌单分享链接");
    historySearch.HandleCreated+=(s,e)=>SendMessage(historySearch.Handle,0x1501,new IntPtr(1),"搜索歌曲、歌手或平台");
    songSearch.HandleCreated+=(s,e)=>SendMessage(songSearch.Handle,0x1501,new IntPtr(1),"搜索歌曲、歌手或平台");
-   Text="音乐助手 0.4 · Walkman Library";Size=new Size(1320,920);MinimumSize=new Size(1060,740);StartPosition=FormStartPosition.CenterScreen;BackColor=background;Font=new Font("Microsoft YaHei UI",9f);ForeColor=ink;
+   Text="音乐助手 0.5 · Walkman Library";Size=new Size(1320,920);MinimumSize=new Size(1060,740);StartPosition=FormStartPosition.CenterScreen;BackColor=background;Font=new Font("Microsoft YaHei UI",9f);ForeColor=ink;
    previewMode=preview;InitializeShell();
    FormClosing+=(s,e)=>{if(busy){cancellation.Cancel();e.Cancel=true;Append("正在停止；完成当前提交后即可关闭。");}else if(!SkipTaskSaveOnClose)SaveTasks();};
    string taskPath=Path.Combine(store.Root,"tasks.json");if(File.Exists(taskPath))playlists.AddRange(Json.Read<List<Playlist>>(File.ReadAllText(taskPath,Encoding.UTF8))??new List<Playlist>());
@@ -47,7 +47,7 @@ namespace MusicAssistant {
   Track Selected {get{return showCards?cardSelected:(grid.CurrentRow==null?null:grid.CurrentRow.DataBoundItem as Track);}}
   void BindGrid(){if(buildingUi)return;var visible=VisibleTracks();grid.DataSource=new BindingList<Track>(visible);BuildAlbumWall(visible);UpdateStats();UpdateStage(visible.Count);}
   void UpdateStats(){UpdateCounters();}
-  void Add(Playlist p){playlists.Add(p);RefreshLists();listSelector.SelectedIndex=playlists.Count-1;SaveTasks();Append("已导入「"+p.Name+"」，"+p.Tracks.Count+" 首。歌曲顺序按原列表保留。");}
+  void Add(Playlist p){playlists.Add(p);RefreshLists();listSelector.SelectedIndex=playlists.Count-1;SaveTasks();Append("已导入「"+p.Name+"」，"+p.Tracks.Count+" 首。歌曲顺序按原列表保留。");if(!string.IsNullOrEmpty(p.ImportNotice))Append("读取说明："+p.ImportNotice);}
   void ImportFile(){using(var dialog=new OpenFileDialog{Filter="歌单文件|*.csv;*.tsv;*.json;*.m3u;*.m3u8",Multiselect=true})if(dialog.ShowDialog(this)==DialogResult.OK)foreach(string file in dialog.FileNames)Add(Imports.Load(file));}
   void ImportFolder(){using(var dialog=new FolderBrowserDialog{Description="选择明确允许处理的音乐目录（包括子目录）"})if(dialog.ShowDialog(this)==DialogResult.OK)Add(Imports.FromFolder(dialog.SelectedPath));}
   void ChooseSourceFolder(){using(var dialog=new FolderBrowserDialog{Description="选择官方下载目录，只读取你指定目录内的音乐标识"})if(dialog.ShowDialog(this)==DialogResult.OK){if(!store.Settings.SourceFolders.Contains(dialog.SelectedPath))store.Settings.SourceFolders.Add(dialog.SelectedPath);store.SaveSettings();Append("已指定下载目录："+dialog.SelectedPath+"；开始处理时按歌曲 ID 自动关联。");}}

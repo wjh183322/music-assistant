@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -10,6 +11,7 @@ namespace MusicAssistant {
   [STAThread] static void Main(string[] args) {
    SetProcessDPIAware();Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
    try {
+    if(args.Length>2&&args[0]=="--playlist-check"){var playlist=PublicPlaylist.Read(args[1],CancellationToken.None);Files.AtomicText(Path.GetFullPath(args[2]),Json.Write(new{Status="passed",Name=playlist.Name,Count=playlist.Tracks.Count,SourceTrackCount=playlist.SourceTrackCount,SourceIdCount=playlist.SourceIdCount,MissingDetailsCount=playlist.MissingDetailsCount,Notice=playlist.ImportNotice,FirstIds=playlist.Tracks.Take(3).Select(t=>t.SongId).ToArray(),LastIds=playlist.Tracks.Skip(Math.Max(0,playlist.Tracks.Count-3)).Select(t=>t.SongId).ToArray()}));return;}
     bool uiCheck=args.Length>0&&args[0]=="--ui-check";
     bool preview=args.Length>0&&(args[0]=="--preview"||uiCheck),check=args.Length>0&&args[0]=="--startup-check",startupPreview=args.Length>0&&args[0]=="--startup-preview";
     string previewRoot=preview?Path.Combine(Path.GetDirectoryName(Path.GetFullPath(args[1])),"preview-state-"+Path.GetFileNameWithoutExtension(args[1])):null;
@@ -22,7 +24,7 @@ namespace MusicAssistant {
       else Application.Run(form);
      }}finally{mutex.ReleaseMutex();}
     }
-   } catch(Exception ex) {if(args.Length>1&&(args[0]=="--preview"||args[0]=="--startup-check"||args[0]=="--startup-preview"||args[0]=="--ui-check")){File.WriteAllText(args[1]+".error.txt",ex.ToString());Environment.ExitCode=1;}else MessageBox.Show("无法启动："+ex.Message,"音乐助手",MessageBoxButtons.OK,MessageBoxIcon.Error);}
+   } catch(Exception ex) {if(args.Length>2&&args[0]=="--playlist-check"){File.WriteAllText(args[2]+".error.txt",ex.ToString());Environment.ExitCode=1;}else if(args.Length>1&&(args[0]=="--preview"||args[0]=="--startup-check"||args[0]=="--startup-preview"||args[0]=="--ui-check")){File.WriteAllText(args[1]+".error.txt",ex.ToString());Environment.ExitCode=1;}else MessageBox.Show("无法启动："+ex.Message,"音乐助手",MessageBoxButtons.OK,MessageBoxIcon.Error);}
   }
  }
 }

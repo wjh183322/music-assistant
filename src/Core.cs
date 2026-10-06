@@ -14,10 +14,12 @@ namespace MusicAssistant {
   public string SourcePath {get;set;} public string Status {get;set;} public string Detail {get;set;}
   public string OutputPath {get;set;} public bool Force {get;set;}
   public string HistoryKey {get;set;}
+  public bool MetadataUnavailable {get;set;}
   public Track() { Title=Artist=Album=Platform=SongId=Quality=SourcePath=OutputPath=Detail=""; Status="待处理"; }
  }
  public sealed class Playlist {
   public string Name {get;set;} public string Link {get;set;} public List<Track> Tracks {get;set;}
+  public int SourceTrackCount {get;set;} public int SourceIdCount {get;set;} public int MissingDetailsCount {get;set;} public string ImportNotice {get;set;}
   public Playlist() {Name="新歌单"; Link=""; Tracks=new List<Track>();}
  }
  public sealed class HistoryEntry {

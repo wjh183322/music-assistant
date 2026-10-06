@@ -13,6 +13,7 @@ static class CoreTests {
  static void Main(string[] args){try{root=Path.Combine(Path.GetFullPath(args.Length>0?args[0]:".test-output"),Guid.NewGuid().ToString("N"));Directory.CreateDirectory(root);audio=new AudioTool(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"tools"));Assert(audio.Available,"音频组件可用");Run();Console.WriteLine("ALL PASSED: "+passed+" — "+root);}catch(Exception ex){Console.Error.WriteLine(ex);Environment.ExitCode=1;}}
  static void Run(){
   StartupTests.Run(root,Assert);
+  PlaylistTests.Run(Assert);
   Assert(Files.SafeName("CON")=="_CON"&&Files.SafeName("a/b:c")=="a_b_c","Windows 文件名和保留名称");
   bool traversal=false;try{Files.Inside(root,"../outside");}catch(InvalidDataException){traversal=true;}Assert(traversal,"阻止导出目录穿越");
   Assert(AudioTool.Quote("x\\")=="\"x\\\\\""&&AudioTool.Quote("a\"b")=="\"a\\\"b\"","进程参数转义（不经过 shell）");

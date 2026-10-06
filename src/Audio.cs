@@ -109,7 +109,7 @@ namespace MusicAssistant {
    ct.ThrowIfCancellationRequested();t.OutputPath="";
    if(string.IsNullOrEmpty(t.SourcePath)||!File.Exists(t.SourcePath)) {
     var old=store.Identity(t);if(old!=null){Reuse(t,old,"历史记录复用（不检查播放器）");return;}
-    t.Status="待官方下载";t.Detail="缺少文件或关联；请官方下载后选择对应文件。多个品质历史不会自动合并。";return;
+    t.Status=t.MetadataUnavailable?"待官方确认":"待官方下载";t.Detail=t.MetadataUnavailable?"已保留歌曲 ID；公开详情未返回，请通过官方客户端确认或关联原文件。":"缺少文件或关联；请官方下载后选择对应文件。多个品质历史不会自动合并。";return;
    }
    string source=Path.GetFullPath(t.SourcePath);
    string temp=null,decodeFolder=null;bool committed=false;string sourceHash="";string relative="";
@@ -121,7 +121,7 @@ namespace MusicAssistant {
      string input=source;DecodedSource container=null;
      if(Protected(source)) {decodeFolder=Path.Combine(store.Settings.OutputRoot,".working","decode_"+Guid.NewGuid().ToString("N"));container=SourceDecoder.Decode(source,decodeFolder,ct);container.Apply(t);input=container.AudioPath;}
      var probe=audio.Inspect(input,ct);string title=Json.Str(probe.Tags,"title"),artist=Json.Str(probe.Tags,"artist"),album=Json.Str(probe.Tags,"album");
-     if(string.IsNullOrWhiteSpace(t.Title)||t.Title==Path.GetFileNameWithoutExtension(source))if(title.Length>0)t.Title=title;
+     if(string.IsNullOrWhiteSpace(t.Title)||t.Title==Path.GetFileNameWithoutExtension(source)||t.MetadataUnavailable)if(title.Length>0){t.Title=title;t.MetadataUnavailable=false;}
      if(string.IsNullOrWhiteSpace(t.Artist))t.Artist=artist;if(string.IsNullOrWhiteSpace(t.Album))t.Album=album;
      string extension=audio.Extension(probe,input,store.Settings.PreferFlac);string hash=audio.AudioHash(input,probe,ct);
      var existing=store.Exact(hash,probe.Profile,t);
@@ -170,7 +170,7 @@ namespace MusicAssistant {
    if(string.IsNullOrWhiteSpace(t.SongId)||store.History.Any(h=>h.Platform==t.Platform&&h.SongId==t.SongId&&h.AudioHash==e.AudioHash&&h.Profile==e.Profile))return;
    store.Add(new HistoryEntry {Key=Guid.NewGuid().ToString("N"),Title=t.Title,Artist=t.Artist,Album=t.Album,Platform=t.Platform,SongId=t.SongId,AlternateSongId=t.AlternateSongId,Quality=t.Quality,AudioHash=e.AudioHash,Profile=e.Profile,RelativePath=e.RelativePath,ProcessedAt=DateTimeOffset.Now.ToString("o")});
   }
-  static void Reuse(Track t,HistoryEntry entry,string reason) {t.HistoryKey=entry.Key;t.OutputPath=entry.RelativePath;t.Status="历史重复";t.Detail=reason;}
+  static void Reuse(Track t,HistoryEntry entry,string reason) {if(t.MetadataUnavailable){t.Title=entry.Title;t.Artist=entry.Artist;t.Album=entry.Album;t.MetadataUnavailable=false;}t.HistoryKey=entry.Key;t.OutputPath=entry.RelativePath;t.Status="历史重复";t.Detail=reason;}
   static void PreserveSidecars(string source,string output,string temp) {
    string stem=Path.Combine(Path.GetDirectoryName(source),Path.GetFileNameWithoutExtension(source));
    foreach(string ext in new[]{".lrc",".txt",".jpg",".jpeg",".png"}) {string side=stem+ext;if(!File.Exists(side))continue;string target=Path.Combine(temp,Path.GetFileNameWithoutExtension(output)+ext);

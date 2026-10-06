@@ -9,8 +9,8 @@ namespace MusicAssistant {
  public static class UiTheme {
   public static readonly Color Accent=Color.FromArgb(236,98,78),Ink=Color.FromArgb(41,48,60),Muted=Color.FromArgb(139,150,165),Line=Color.FromArgb(233,237,242),Background=Color.FromArgb(247,248,250),Soft=Color.FromArgb(255,240,235);
   public static GraphicsPath Round(RectangleF rect,float radius){var p=new GraphicsPath();float d=Math.Min(radius*2,Math.Min(rect.Width,rect.Height));if(d<=0){p.AddRectangle(rect);return p;}p.AddArc(rect.X,rect.Y,d,d,180,90);p.AddArc(rect.Right-d,rect.Y,d,d,270,90);p.AddArc(rect.Right-d,rect.Bottom-d,d,d,0,90);p.AddArc(rect.X,rect.Bottom-d,d,d,90,90);p.CloseFigure();return p;}
-  public static Color StatusColor(string status){if(status=="已完成")return Color.FromArgb(77,139,106);if(status=="历史重复")return Color.FromArgb(107,125,157);if(status=="失败")return Color.FromArgb(204,91,86);if(status=="需要密钥"||status=="待官方下载")return Color.FromArgb(177,137,73);return Muted;}
-  public static Color StatusFill(string status){if(status=="已完成")return Color.FromArgb(237,247,240);if(status=="历史重复")return Color.FromArgb(240,243,250);if(status=="失败")return Color.FromArgb(255,240,238);if(status=="需要密钥"||status=="待官方下载")return Color.FromArgb(255,247,232);return Color.FromArgb(244,246,249);}
+  public static Color StatusColor(string status){if(status=="已完成")return Color.FromArgb(77,139,106);if(status=="历史重复")return Color.FromArgb(107,125,157);if(status=="失败")return Color.FromArgb(204,91,86);if(status=="需要密钥"||status=="待官方下载"||status=="待官方确认")return Color.FromArgb(177,137,73);return Muted;}
+  public static Color StatusFill(string status){if(status=="已完成")return Color.FromArgb(237,247,240);if(status=="历史重复")return Color.FromArgb(240,243,250);if(status=="失败")return Color.FromArgb(255,240,238);if(status=="需要密钥"||status=="待官方下载"||status=="待官方确认")return Color.FromArgb(255,247,232);return Color.FromArgb(244,246,249);}
  }
  public class SurfacePanel:Panel {
   public int Radius {get;set;}public Color BorderColor {get;set;}public Color SurfaceColor {get;set;}

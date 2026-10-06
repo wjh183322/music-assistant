@@ -23,7 +23,7 @@ namespace MusicAssistant {
     if(sourceNumeric&&!trackNumeric&&!string.IsNullOrEmpty(track.AlternateSongId)&&SongId!=track.AlternateSongId)throw new InvalidDataException("下载文件的数字歌曲 ID 与歌单记录不同");
    }
    if(string.IsNullOrEmpty(track.Platform))track.Platform=Platform;if(string.IsNullOrEmpty(track.SongId))track.SongId=SongId??"";
-   string name; if(Tags.TryGetValue("title",out name)&&(string.IsNullOrEmpty(track.Title)||track.Title==Path.GetFileNameWithoutExtension(track.SourcePath)))track.Title=name;
+   string name; if(Tags.TryGetValue("title",out name)&&(string.IsNullOrEmpty(track.Title)||track.Title==Path.GetFileNameWithoutExtension(track.SourcePath)||track.MetadataUnavailable)){track.Title=name;track.MetadataUnavailable=false;}
    if(Tags.TryGetValue("artist",out name)&&string.IsNullOrEmpty(track.Artist))track.Artist=name;
    if(Tags.TryGetValue("album",out name)&&string.IsNullOrEmpty(track.Album))track.Album=name;
   }

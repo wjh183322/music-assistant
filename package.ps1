@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
-$release = Join-Path $root 'release\音乐助手-0.4'
+$release = Join-Path $root 'release\音乐助手-0.5'
 New-Item -ItemType Directory -Force -Path (Join-Path $release 'tools'), (Join-Path $release 'examples') | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $release 'licenses') | Out-Null
 Copy-Item -LiteralPath (Join-Path $root 'dist\MusicAssistant.exe') -Destination $release
@@ -19,5 +19,5 @@ Build source/configuration details: FFmpeg-README.txt
 License: GPLv3; see FFmpeg-LICENSE.txt
 Verified archive SHA256: 4705843ccaaf54257c16ad90f3e952ece33c17df964ecf7bfdbb0f49c7171077
 '@ | Set-Content -LiteralPath (Join-Path $release 'tools\SOURCE.txt') -Encoding utf8
-Compress-Archive -LiteralPath $release -DestinationPath (Join-Path $root 'release\音乐助手-0.4-win-x64.zip') -Force
-Write-Output 'release\音乐助手-0.4-win-x64.zip'
+Compress-Archive -LiteralPath $release -DestinationPath (Join-Path $root 'release\音乐助手-0.5-win-x64.zip') -Force
+Write-Output 'release\音乐助手-0.5-win-x64.zip'
